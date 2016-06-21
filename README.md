@@ -39,19 +39,18 @@ type Interface interface {
 	Clear()
 	Values() []interface{}
 }
-
 ```
 
 Container specific operations:
 
 ```go
-// Returns sorted container's elements with respect to the passed comparator. 
+// Returns sorted container's elements with respect to the passed comparator.
 // Does not effect the ordering of elements within the container.
 // Uses timsort.
 func GetSortedValues(container Interface, comparator utils.Comparator) []interface{} {
 ```
 
-####Sets 
+####Sets
 
 A set is a data structure that can store elements and no repeated values. It is a computer implementation of the mathematical concept of a finite set. Unlike most other collection types, rather than retrieving a specific element from a set, one typically tests an element for membership in a set. This structed is often used to ensure that no duplicates are present in a collection.
 
@@ -96,8 +95,6 @@ func main() {
 	set.Empty()            // true
 	set.Size()             // 0
 }
-
-	
 ```
 
 #####TreeSet
@@ -125,12 +122,11 @@ func main() {
 	set.Empty()                           // true
 	set.Size()                            // 0
 }
-
 ```
 
 ####Lists
 
-A list is a data structure that can store elements and may have repeated values. There is no ordering in a list. The user can access and remove an element by the index position.
+A list is a data structure that can store values and may have repeated values. There is no ordering in a list. The user can access and remove a value by the index position.
 
 All lists implement the list interface with the following methods:
 
@@ -138,10 +134,11 @@ All lists implement the list interface with the following methods:
 type Interface interface {
     Get(index int) (interface{}, bool)
 	Remove(index int)
-	Add(elements ...interface{})
-	Contains(elements ...interface{}) bool
+	Add(values ...interface{})
+	Contains(values ...interface{}) bool
 	Sort(comparator utils.Comparator)
     Swap(index1, index2 int)
+   	Insert(index int, values ...interface{})
 
 	containers.Interface
 	// Empty() bool
@@ -184,12 +181,14 @@ func main() {
 	_ = list.Size()                       // 0
 	list.Add("a")                         // ["a"]
 	list.Clear()                          // []
+    list.Insert(0, "b")                   // ["b"]
+    list.Insert(0, "a")                   // ["a","b"]
 }
 ```
 
 #####SinglyLinkedList
 
-This structure implements the _List_ interface and is a linked data structure where each element points to the next in the list.
+This structure implements the _List_ interface and is a linked data structure where each value points to the next in the list.
 
 Direct access method _Get(index)_ and _Remove()_ are of linear performance. _Append_ and _Prepend_ are of constant time performance. Checking with _Contains()_ is of quadratic complexity.
 
@@ -219,14 +218,14 @@ func main() {
 	_ = list.Size()                       // 0
 	list.Add("a")                         // ["a"]
 	list.Clear()                          // []
+    list.Insert(0, "b")                   // ["b"]
+    list.Insert(0, "a")                   // ["a","b"]
 }
-
-
 ```
 
 #####DoublyLinkedList
 
-This structure implements the _List_ interface and is a linked data structure where each element points to the next and previous element in the list.
+This structure implements the _List_ interface and is a linked data structure where each value points to the next and previous element in the list.
 
 Direct access method _Get(index)_ and _Remove()_ are of linear performance. _Append_ and _Prepend_ are of constant time performance. Checking with _Contains()_ is of quadratic complexity.
 
@@ -256,9 +255,9 @@ func main() {
 	_ = list.Size()                       // 0
 	list.Add("a")                         // ["a"]
 	list.Clear()                          // []
+    list.Insert(0, "b")                   // ["b"]
+    list.Insert(0, "a")                   // ["a","b"]
 }
-
-
 ```
 
 
@@ -279,14 +278,13 @@ type Interface interface {
 	// Clear()
 	// Values() []interface{}
 }
-
 ```
 
 #####LinkedListStack
 
-This stack structure is based on a linked list, i.e. each previous element has a point to the next. 
+This stack structure is based on a linked list, i.e. each previous element has a point to the next.
 
-All operations are guaranted constant time performance, except _Values()_, which is as always of linear time performance.
+All operations are guaranteed constant time performance, except _Values()_, which is as always of linear time performance.
 
 ```go
 package main
@@ -307,7 +305,6 @@ func main() {
 	stack.Empty()       // true
 	stack.Size()        // 0
 }
-
 ```
 
 #####ArrayStack
@@ -335,8 +332,6 @@ func main() {
 	stack.Empty()             // true
 	stack.Size()              // 0
 }
-
-
 ```
 
 ####Maps
@@ -361,7 +356,7 @@ type Interface interface {
 
 #####HashMap
 
-Map structure based on hash tables, more exactly, Go's map. Keys are unordered. 
+Map structure based on hash tables, more exactly, Go's map. Keys are unordered.
 
 All operations are guaranted constant time performance, except _Key()_ and _Values()_ retrieval that of linear time performance.
 
@@ -384,12 +379,11 @@ func main() {
 	m.Empty()          // true
 	m.Size()           // 0
 }
-
 ```
 
 #####TreeMap
 
-Map structure based on our red-black tree implementation. Keys are ordered with respect to the passed comparator. 
+Map structure based on our red-black tree implementation. Keys are ordered with respect to the passed comparator.
 
 _Put()_, _Get()_ and _Remove()_ are guaranteed log(n) time performance.
 
@@ -413,9 +407,11 @@ func main() {
 	m.Clear()                           // empty
 	m.Empty()                           // true
 	m.Size()                            // 0
+
+    // Other:
+    m.Min() // Returns the minimum key and its value from map.
+    m.Max() // Returns the maximum key and its value from map.
 }
-
-
 ```
 
 ####Trees
@@ -432,7 +428,7 @@ type Interface interface {
 	// Values() []interface{}
 }
 ```
- 
+
 #####RedBlackTree
 
 A red–black tree is a binary search tree with an extra bit of data per node, its color, which can be either red or black. The extra bit of storage ensures an approximately balanced tree by constraining how nodes are colored from any path from the root to the leaf. Thus, it is a data structure which is a type of self-balancing binary search tree.
@@ -486,9 +482,16 @@ func main() {
 	tree.Clear() // empty
 	tree.Empty() // true
 	tree.Size()  // 0
-}
 
+    // Other:
+    tree.Left() // gets the left-most (min) node
+    tree.Right() // get the right-most (max) node
+    tree.Floor(1) // get the floor node
+    tree.Ceiling(1) // get the ceiling node
+}
 ```
+
+Extending the red-black tree's functionality  has been demonstrated in the following [example](https://github.com/emirpasic/gods/blob/master/examples/redblacktreeextended.go).
 
 #####BinaryHeap
 
@@ -558,7 +561,7 @@ Return values:
   -1, if a < b
    0, if a == b
    1, if a > b
-     
+
 Comparator signature:
 
   type Comparator func(a, b interface{}) int
@@ -640,13 +643,13 @@ func byID(a, b interface{}) int {
 }
 
 func main() {
-	set := treeset.NewWith(byID) 
+	set := treeset.NewWith(byID)
 
 	set.Add(User{2, "Second"})
 	set.Add(User{3, "Third"})
 	set.Add(User{1, "First"})
 	set.Add(User{4, "Fourth"})
-	
+
 	fmt.Println(set) // {1 First}, {2 Second}, {3 Third}, {4 Fourth}
 }
 ```
@@ -670,38 +673,37 @@ func main() {
 	strings = append(strings, "c")              // ["d","a",b","c"]
 	utils.Sort(strings, utils.StringComparator) // ["a","b","c","d"]
 }
-
 ```
 
 ## Motivations
 
-Collections and data structures found in other languages: Java Collections, C++ Standard Template Library (STL) containers, Qt Containers, etc. 
+Collections and data structures found in other languages: Java Collections, C++ Standard Template Library (STL) containers, Qt Containers, etc.
 
 ## Goals
 
-**Fast algorithms**: 
+**Fast algorithms**:
 
   - Based on decades of knowledge and experiences of other libraries mentioned above.
 
-**Memory efficient algorithms**: 
-  
+**Memory efficient algorithms**:
+
   - Avoiding to consume memory by using optimal algorithms and data structures for the given set of problems, e.g. red-black tree in case of TreeMap to avoid keeping redundant sorted array of keys in memory.
 
-**Easy to use library**: 
-  
-  - Well-structued library with minimalistic set of atomic operations from which more complex operations can be crafted.
+**Easy to use library**:
 
-**Stable library**: 
-  
+  - Well-structured library with minimalistic set of atomic operations from which more complex operations can be crafted.
+
+**Stable library**:
+
   - Only additions are permitted keeping the library backward compatible.
 
-**Solid documentation and examples**: 
-  
+**Solid documentation and examples**:
+
   - Learning by example.
 
-**Production ready**: 
+**Production ready**:
 
-  - Still waiting for the project to mature and be used in some heavy back-end tasks.
+  - Used in production.
 
 There is often a tug of war between speed and memory when crafting algorithms. We choose to optimize for speed in most cases within reasonable limits on memory consumption.
 
